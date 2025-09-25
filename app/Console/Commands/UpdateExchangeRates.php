@@ -13,6 +13,11 @@ class UpdateExchangeRates extends Command
     protected $signature = 'rates:update';
     protected $description = 'Update exchange rates from Binance and DolarAPI';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function handle(BinanceService $binance, DolarApiService $dolarApi)
     {
         $this->info('Updating exchange rates...');
