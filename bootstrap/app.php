@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule): void {
         // Actualizar cotizaciones cada 10 minutos
         $schedule->command('rates:update')
-            ->everyMinute()
+            ->everyFiveMinutes()
             ->withoutOverlapping()
             ->runInBackground()
             ->appendOutputTo(storage_path('logs/scheduler.log'));

@@ -26,7 +26,7 @@ class ExchangeController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'from_currency' => 'required|in:USDT,USD,VES',
             'to_currency' => 'required|in:USDT,USD,VES',
-            'rate_type' => 'required|in:p2p_buy,p2p_sell,official,blue'
+            'rate_type' => 'required|in:p2p_buy,p2p_sell,official'
         ]);
 
         $rates = ExchangeRate::latestRates()->get()->keyBy('type');

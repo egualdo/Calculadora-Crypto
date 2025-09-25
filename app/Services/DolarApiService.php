@@ -54,7 +54,7 @@ class DolarApiService
 
         $mapping = [
             'oficial' => 'official',
-            'blue' => 'blue',
+            // 'blue' => 'blue',
             'bolsa' => 'stock',
             'contado con liqui' => 'ccl',
             'euro' => 'euro'

@@ -14,7 +14,7 @@
         <h1 class="text-3xl font-bold text-center mb-8">Calculadora de Divisas</h1>
 
         <!-- Tarjetas de Precios -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Promedio del Dólar (Destacado) -->
             @if ($averageDollarRate)
                 <div
@@ -36,21 +36,23 @@
             @endif
 
             @foreach ($rates as $rate)
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="font-semibold text-lg mb-2">
-                        {{ $rate->type === 'p2p_buy'
-                            ? 'USDT/VES Compra'
-                            : ($rate->type === 'p2p_sell'
-                                ? 'USDT/VES Venta'
-                                : strtoupper($rate->type) . ' USD/VES') }}
-                    </h3>
-                    <p class="text-2xl font-bold text-blue-600">
-                        {{ number_format($rate->average_price, 2) }} VES
-                    </p>
-                    <p class="text-sm text-gray-600">
-                        Actualizado: {{ $rate->last_updated->diffForHumans() }}
-                    </p>
-                </div>
+                @if ($rate->type != 'blue')
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="font-semibold text-lg mb-2">
+                            {{ $rate->type === 'p2p_buy'
+                                ? 'USDT/VES Compra'
+                                : ($rate->type === 'p2p_sell'
+                                    ? 'USDT/VES Venta'
+                                    : ' USD/VES' . ' ' . 'Oficial') }}
+                        </h3>
+                        <p class="text-2xl font-bold text-blue-600">
+                            {{ number_format($rate->average_price, 2) }} VES
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            Actualizado: {{ $rate->last_updated->diffForHumans() }}
+                        </p>
+                    </div>
+                @endif
             @endforeach
         </div>
 
@@ -96,8 +98,8 @@
                             USDT Venta P2P</option>
                         <option value="official" {{ ($formData['rate_type'] ?? '') == 'official' ? 'selected' : '' }}>
                             Dólar Oficial</option>
-                        <option value="blue" {{ ($formData['rate_type'] ?? '') == 'blue' ? 'selected' : '' }}>Dólar
-                            Blue</option>
+                        {{-- <option value="blue" {{ ($formData['rate_type'] ?? '') == 'blue' ? 'selected' : '' }}>Dólar
+                            Blue</option> --}}
                     </select>
                 </div>
                 <div class="flex items-end">
