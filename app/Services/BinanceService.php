@@ -26,7 +26,7 @@ class BinanceService
                 'transAmount' => ''
             ];
 
-            $response = Http::timeout(15)
+            $response = Http::withoutVerifying()->timeout(15)
                 ->retry(3, 1000)
                 ->post($this->baseUrl, $requestData);
 
@@ -38,6 +38,7 @@ class BinanceService
 
             return $this->processP2PData($data['data'] ?? []);
         } catch (Exception $e) {
+            // dd('Error fetching Binance P2P rates: ' . $e->getMessage());
             Log::error('Error fetching Binance P2P rates: ' . $e->getMessage());
             return null;
         }

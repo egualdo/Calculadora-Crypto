@@ -13,7 +13,7 @@ class DolarApiService
     public function getDollarRates()
     {
         try {
-            $response = Http::timeout(10)
+            $response = Http::withoutVerifying()->timeout(10)
                 ->retry(3, 1000)
                 ->get($this->baseUrl);
 

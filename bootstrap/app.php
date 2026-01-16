@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
+        channels: __DIR__ . '/../routes/channels.php',
         web: __DIR__ . '/../routes/web.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
@@ -18,9 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withSchedule(function (Schedule $schedule): void {
-        // Actualizar cotizaciones cada 5 minutos
+        // Actualizar cotizaciones cada  minuto
         $schedule->command('rates:update')
-            ->everyFiveMinutes()
+            ->everyMinute()
             ->withoutOverlapping()
             ->runInBackground()
             ->appendOutputTo(storage_path('logs/scheduler.log'));
