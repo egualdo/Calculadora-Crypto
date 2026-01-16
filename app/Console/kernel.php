@@ -26,6 +26,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('rates:serve')->everyFiveSeconds()
             ->withoutOverlapping()
             ->runInBackground()
-            ->appendOutputTo(storage_path('logs/scheduler_broadcast.log'));
+            ->appendOutputTo(storage_path('logs/scheduler.log'));
     }
 }

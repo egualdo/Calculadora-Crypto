@@ -30,7 +30,7 @@ class UpdateExchangeRates extends Command
         $this->updateDollarRates($dolarApi);
 
         // Clear cache
-        Cache::forget('latest_exchange_rates');
+        // Cache::forget('latest_exchange_rates');
 
         $this->info('Exchange rates updated successfully!' . Carbon::now());
     }
