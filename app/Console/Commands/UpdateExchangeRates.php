@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Services\BinanceService;
 use App\Services\DolarApiService;
 use App\Models\ExchangeRate;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class UpdateExchangeRates extends Command
@@ -31,7 +32,7 @@ class UpdateExchangeRates extends Command
         // Clear cache
         Cache::forget('latest_exchange_rates');
 
-        $this->info('Exchange rates updated successfully!');
+        $this->info('Exchange rates updated successfully!' . Carbon::now());
     }
 
     private function updateBinanceRates(BinanceService $binance)
