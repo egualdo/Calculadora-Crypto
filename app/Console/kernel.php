@@ -23,6 +23,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Run a single broadcast every minute. Adjust frequency as needed.
-        $schedule->command('rates:serve')->everyFiveSeconds()->withoutOverlapping();
+        $schedule->command('rates:serve')->everyFiveSeconds()
+            ->withoutOverlapping()
+            ->runInBackground()
+            ->appendOutputTo(storage_path('logs/scheduler_broadcast.log'));
     }
 }
