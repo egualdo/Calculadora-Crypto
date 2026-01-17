@@ -20,7 +20,7 @@
                 <div
                     class="bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg shadow-lg p-6 order-first lg:order-none">
                     <h3 class="font-bold text-lg mb-2">
-                        💰 Promedio Dólar
+                        💰 Promedio del Dólar USD
                     </h3>
                     <p class="text-2xl font-bold">
                         {{ number_format($averageDollarRate['average_price'], 2) }} VES
