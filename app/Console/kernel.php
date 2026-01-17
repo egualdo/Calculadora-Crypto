@@ -11,7 +11,7 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         \App\Console\Commands\UpdateExchangeRates::class,
-        // \App\Console\Commands\BroadcastExchangeRates::class,
+        // \App\Console\Commands\BroadcastExchangeRates::class,   agregarlo si es necesario
     ];
 
     protected function commands()
