@@ -30,9 +30,18 @@ jobs:
       #run: php artisan config:cache
 
       - name: Deploy to shared hosting
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        # uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        # with:
+        #   server: ${{ secrets.FTP_HOST }}
+        #   username: ${{ secrets.FTP_USERNAME }}
+        #   password: ${{ secrets.FTP_PASSWORD }}
+        #   server-dir: ${{ secrets.FTP_DESTINATION }}
+
+        uses: appleboy/ssh-action@v0.1.5
         with:
-          server: ${{ secrets.FTP_HOST }}
+          key: ${{ secrets.FTP_PASSWORD }}
+          host: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_DESTINATION }}
+          script: |
+            cd /Calculadora-Crypto
+            git pull
