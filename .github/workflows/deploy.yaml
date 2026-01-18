@@ -48,8 +48,8 @@ jobs:
           # script: |
           #   cd var/www/Calculadora-Crypto
           #   git pull
+      - name: Pull changes on server
         run: git pull origin master
-          php artisan config:cache
         # uses: appleboy/ssh-action@v0.1.5
         # with:
         #   key: ${{ secrets.FTP_PASSWORD }}
