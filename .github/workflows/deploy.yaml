@@ -33,14 +33,14 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3 # Configura el agente SSH
         with:
-        ssh-private-key: ${{ secrets.SSH_KEY }} # Usa tu secreto SSH
+          ssh-private-key: ${{ secrets.SSH_KEY }} # Usa tu secreto SSH
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3 # Ejecuta comandos SSH en el servidor
         with:
-        host: ${{ secrets.FTP_HOST }} # Dirección IP o dominio del servidor
-        username: ${{ secrets.FTP_USERNAME }} # Usuario SSH
-        script: |
-          cd /var/www/Calculadora-Crypto
-          git pull origin master
-          sudo systemctl restart apache2
+          host: ${{ secrets.FTP_HOST }} # Dirección IP o dominio del servidor
+          username: ${{ secrets.FTP_USERNAME }} # Usuario SSH
+          script: |
+            cd /var/www/Calculadora-Crypto
+            git pull origin master
+            sudo systemctl restart apache2
