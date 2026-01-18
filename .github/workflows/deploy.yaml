@@ -35,26 +35,22 @@ jobs:
       #   username: ${{ secrets.FTP_USERNAME }}
       #   password: ${{ secrets.FTP_PASSWORD }}
       #   server-dir: ${{ secrets.FTP_DESTINATION }}
-      - name: Commit and Push changes
-        # Use the action-commit-push action
-        uses: devops-infra/action-commit-push@v1.0.0
+      # - name: Commit and Push changes
+      #   uses: devops-infra/action-commit-push@v1.0.0
+      #   with:
+      #     commit_message: "Automated: Update generated files"
+      #     target_branch: master
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Pull changes on server
+      #   run: git pull
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3 # Ejecuta comandos SSH en el servidor
         with:
-          # A custom commit message
-          commit_message: "Automated: Update generated files"
-          # The branch to push to
-          target_branch: master
-          # Use the built-in GITHUB_TOKEN
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # script: |
-          #   cd var/www/Calculadora-Crypto
-          #   git pull
-      - name: Pull changes on server
-        run: git pull origin master
-        # uses: appleboy/ssh-action@v0.1.5
-        # with:
-        #   key: ${{ secrets.FTP_PASSWORD }}
-        #   host: ${{ secrets.FTP_HOST }}
-        #   username: ${{ secrets.FTP_USERNAME }}
-        #   script: |
-        #     cd /Calculadora-Crypto
-        #     git pull
+          host: ${{ secrets.FTP_HOST }} # Dirección IP o dominio del servidor
+          username: ${{ secrets.FTP_USERNAME }} # Usuario SSH
+          script: |
+            cd /var/www/Calculadora-Crypto
+            git pull origin master
+            sudo systemctl restart apache2
