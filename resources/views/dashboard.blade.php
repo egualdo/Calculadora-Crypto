@@ -11,7 +11,7 @@
 
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center mb-8">Calculadora de Divisas Updated</h1>
+        <h1 class="text-3xl font-bold text-center mb-8">Calculadora de Divisas</h1>
 
         <!-- Tarjetas de Precios -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
