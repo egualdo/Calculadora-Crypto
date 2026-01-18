@@ -29,28 +29,18 @@ jobs:
       #FTP_DESTINATION: ${{ secrets.FTP_DESTINATION }}
       #run: php artisan config:cache
       # - name: Deploy to shared hosting
-      # uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      # with:
-      #   server: ${{ secrets.FTP_HOST }}
-      #   username: ${{ secrets.FTP_USERNAME }}
-      #   password: ${{ secrets.FTP_PASSWORD }}
-      #   server-dir: ${{ secrets.FTP_DESTINATION }}
-      # - name: Commit and Push changes
-      #   uses: devops-infra/action-commit-push@v1.0.0
-      #   with:
-      #     commit_message: "Automated: Update generated files"
-      #     target_branch: master
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Pull changes on server
-      #   run: git pull
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3 # Configura el agente SSH
+        with:
+        ssh-private-key: ${{ secrets.SSH_KEY }} # Usa tu secreto SSH
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3 # Ejecuta comandos SSH en el servidor
         with:
-          host: ${{ secrets.FTP_HOST }} # Dirección IP o dominio del servidor
-          username: ${{ secrets.FTP_USERNAME }} # Usuario SSH
-          script: |
-            cd /var/www/Calculadora-Crypto
-            git pull origin master
-            sudo systemctl restart apache2
+        host: ${{ secrets.FTP_HOST }} # Dirección IP o dominio del servidor
+        username: ${{ secrets.FTP_USERNAME }} # Usuario SSH
+        script: |
+          cd /var/www/Calculadora-Crypto
+          git pull origin master
+          sudo systemctl restart apache2
