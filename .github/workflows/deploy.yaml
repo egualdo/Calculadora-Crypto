@@ -42,12 +42,14 @@ jobs:
           # A custom commit message
           commit_message: "Automated: Update generated files"
           # The branch to push to
-          branch: master
+          target_branch: master
           # Use the built-in GITHUB_TOKEN
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            cd var/www/Calculadora-Crypto
-            git pull
+          # script: |
+          #   cd var/www/Calculadora-Crypto
+          #   git pull
+        run: git pull origin master
+          php artisan config:cache
         # uses: appleboy/ssh-action@v0.1.5
         # with:
         #   key: ${{ secrets.FTP_PASSWORD }}
