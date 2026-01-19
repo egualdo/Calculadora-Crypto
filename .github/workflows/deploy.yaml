@@ -30,17 +30,17 @@ jobs:
       #run: php artisan config:cache
       # - name: Deploy to shared hosting
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3 # Configura el agente SSH
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }} # Usa tu secreto SSH
+      # - name: Set up SSH
+      #   uses: webfactory/ssh-agent@v0.5.3 # Configura el agente SSH
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_KEY }} # Usa tu secreto SSH
 
       - name: Deploy to server
-        uses: appleboy/ssh-action@v1.0.3 # Ejecuta comandos SSH en el servidor
+        uses: appleboy/ssh-action@v0.1.5
         with:
-          host: ${{ secrets.FTP_HOST }} # Dirección IP o dominio del servidor
-          username: ${{ secrets.FTP_USERNAME }} # Usuario SSH
+          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
           script: |
             cd /var/www/Calculadora-Crypto
             git pull origin master
-            sudo systemctl restart apache2
