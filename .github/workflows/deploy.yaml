@@ -32,9 +32,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.5
         with:
           key: ${{ secrets.SSH_KEY }}
-          host: ${{ secrets.FTP_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
-            cd /var/www/Calculadora-Crypto
-            git pull origin master
+          script: git pull origin master
