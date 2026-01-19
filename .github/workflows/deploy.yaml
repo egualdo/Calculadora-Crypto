@@ -28,7 +28,6 @@ jobs:
       # FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       # FTP_DESTINATION: ${{ secrets.FTP_DESTINATION }}
       # run: php artisan config:cache
-
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -38,4 +37,4 @@ jobs:
           script: |
             cd /var/www/Calculadora-Crypto
             git pull origin master
-        run: php artisan config:cache
+        # run: php artisan config:cache
