@@ -37,4 +37,3 @@ jobs:
           script: |
             cd /var/www/Calculadora-Crypto
             git pull origin master
-        # run: php artisan config:cache
