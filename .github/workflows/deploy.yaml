@@ -34,6 +34,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd /var/www/Calculadora-Crypto
             git pull origin master
