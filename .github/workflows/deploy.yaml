@@ -24,7 +24,6 @@ jobs:
       #   FTP_HOST: ${{ secrets.FTP_HOST }}
       #  FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
       # FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.5
         with:
