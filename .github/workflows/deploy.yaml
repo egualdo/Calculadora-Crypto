@@ -46,11 +46,11 @@ jobs:
       #     composer i
 
       # Use webfactory/ssh-agent to load the private key from the secret
-      - name: Set up SSH agent
-        uses: webfactory/ssh-agent@v0.9.0 # Use the latest version
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
-          # passphrase: ${{ secrets.PASSPHRASE }}
+      # - name: Set up SSH agent
+      #   uses: webfactory/ssh-agent@v0.9.0 # Use the latest version
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_KEY }}
+      # passphrase: ${{ secrets.PASSPHRASE }}
 
       # Use appleboy/git-push-action to push changes via SSH
       - name: Push changes
@@ -61,3 +61,4 @@ jobs:
           branch: master
           ssh_key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
+GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
