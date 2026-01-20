@@ -32,5 +32,5 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           passphrase: ${{ secrets.PASSPHRASE }}
           # port: '443'
-          port: ${{ secrets.SSH_PORT }}
+          # port: ${{ secrets.SSH_PORT }}
           script: git pull origin master
