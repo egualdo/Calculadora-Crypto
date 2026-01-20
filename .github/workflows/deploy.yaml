@@ -54,11 +54,15 @@ jobs:
 
       # Use appleboy/git-push-action to push changes via SSH
       - name: Push changes
-        uses: appleboy/git-push-action@v1.0.0 # Use the latest version
+        #   uses: appleboy/git-push-action@v1.0.0 # Use the latest version
+        #   with:
+        #     # remote: git@github.com:${{ github.repository }}.git
+        #     remote: ${{ secrets.SSH_HOST }}
+        #     branch: master
+        #     ssh_key: ${{ secrets.SSH_KEY }}
+        #     passphrase: ${{ secrets.PASSPHRASE }}
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
-          # remote: git@github.com:${{ github.repository }}.git
-          remote: ${{ secrets.SSH_HOST }}
-          branch: master
-          ssh_key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: master
