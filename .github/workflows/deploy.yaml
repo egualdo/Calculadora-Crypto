@@ -24,13 +24,38 @@ jobs:
       #   FTP_HOST: ${{ secrets.FTP_HOST }}
       #  FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
       # FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v0.1.5
+
+      # - name: Deploy to server
+      #   uses: appleboy/ssh-action@v0.1.5
+      #   with:
+      #     key: ${{ secrets.SSH_KEY }}
+      #     host: ${{ secrets.SSH_HOST }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     passphrase: ${{ secrets.PASSPHRASE }}
+      #     # port: '443'
+      #     port: ${{ secrets.SSH_PORT }}
+      #     script: git pull origin master
+
+      # with:
+      #   key: ${{ secrets.SSH_KEY }}
+      #   host: ${{ secrets.SSH_HOST }}
+      #   username: ${{ secrets.SSH_USERNAME }}
+      #   passphrase: ${{ secrets.PASSPHRASE }}
+      #   script: |
+      #     git pull origin master
+      #     composer i
+
+      # Use webfactory/ssh-agent to load the private key from the secret
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0 # Use the latest version
         with:
-          key: ${{ secrets.SSH_KEY }}
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          # port: '443'
-          port: ${{ secrets.SSH_PORT }}
-          script: git pull origin master
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      # Use appleboy/git-push-action to push changes via SSH
+      - name: Push changes
+        uses: appleboy/git-push-action@v1.0.0 # Use the latest version
+        with:
+          # remote: git@github.com:${{ github.repository }}.git
+          remote: ${{ secrets.SSH_HOST }}
+          branch: master
+          ssh_key: ${{ secrets.SSH_KEY }}
