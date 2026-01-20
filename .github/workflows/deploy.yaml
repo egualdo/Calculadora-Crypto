@@ -67,5 +67,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: master
           FOLDER: .
+      - name: Pull changes on server
         run: |
           git pull origin master
