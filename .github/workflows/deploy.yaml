@@ -19,7 +19,7 @@ jobs:
         with:
           php-version: "8.4.16"
 
-      # - name: Install dependencies
+      # - name: Install dependencies test
       #   run: composer install --no-dev --prefer-dist --no-scripts --no-progress --no-suggest
       # - name: Configure env
       #  env:
@@ -34,5 +34,5 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          port: "22"
+          port: ${{ secrets.PORT }}
           script: git pull origin master
