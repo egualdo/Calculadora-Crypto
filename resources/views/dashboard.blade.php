@@ -235,7 +235,7 @@
                 Ingresa cualquier monto en VES para ver cuántos dólares obtienes con cada cotización
             </p>
 
-            <form action="{{ route('calculate.equivalence') }}" method="POST" class="max-w-md mx-auto">
+            {{-- <form action="{{ route('calculate.equivalence') }}" method="POST" class="max-w-md mx-auto">
                 @csrf
                 <div class="flex gap-4">
                     <div class="flex-1">
@@ -262,7 +262,7 @@
                         </button>
                     </div>
                 </div>
-            </form>
+            </form> --}}
 
             @if (isset($equivalenceResult))
                 <div id="equivalence-results"
