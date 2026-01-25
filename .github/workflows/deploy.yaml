@@ -24,6 +24,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             # 1. Ir a la carpeta del proyecto
             cd /var/www/Calculadora-Crypto
