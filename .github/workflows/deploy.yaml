@@ -1,4 +1,4 @@
-name: Sharedhosting deploy
+name: Sharedhosting deploy 1
 on:
   push:
     branches:
