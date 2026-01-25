@@ -17,56 +17,40 @@ jobs:
         with:
           php-version: "8.4.16"
 
-      # - name: Install dependencies test 2
-      #   run: composer install --no-dev --prefer-dist --no-scripts --no-progress --no-suggest
-      # - name: Configure env
-      #  env:
-      #   FTP_HOST: ${{ secrets.FTP_HOST }}
-      #  FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-      # FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-
-      # - name: Deploy to server
-      #   uses: appleboy/ssh-action@v0.1.5
-      #   with:
-      #     key: ${{ secrets.SSH_KEY }}
-      #     host: ${{ secrets.SSH_HOST }}
-      #     username: ${{ secrets.SSH_USERNAME }}
-      #     passphrase: ${{ secrets.PASSPHRASE }}
-      #     # port: '443'
-      #     port: ${{ secrets.SSH_PORT }}
-      #     script: git pull origin master
-
-      # with:
-      #   key: ${{ secrets.SSH_KEY }}
-      #   host: ${{ secrets.SSH_HOST }}
-      #   username: ${{ secrets.SSH_USERNAME }}
-      #   passphrase: ${{ secrets.PASSPHRASE }}
-      #   script: |
-      #     git pull origin master
-      #     composer i
-
-      # Use webfactory/ssh-agent to load the private key from the secret
-      # - name: Set up SSH agent
-      #   uses: webfactory/ssh-agent@v0.9.0 # Use the latest version
-      #   with:
-      #     ssh-private-key: ${{ secrets.SSH_KEY }}
-      # passphrase: ${{ secrets.PASSPHRASE }}
-
-      # Use appleboy/git-push-action to push changes via SSH
-      - name: Push changes
-        #   uses: appleboy/git-push-action@v1.0.0 # Use the latest version
-        #   with:
-        #     # remote: git@github.com:${{ github.repository }}.git
-        #     remote: ${{ secrets.SSH_HOST }}
-        #     branch: master
-        #     ssh_key: ${{ secrets.SSH_KEY }}
-        #     passphrase: ${{ secrets.PASSPHRASE }}
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@master
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: master
-          FOLDER: .
-      - name: Pull changes on server
-        run: |
-          git pull origin master
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            # 1. Ir a la carpeta del proyecto
+            cd /var/www/Calculadora-Crypto
+
+            # 2. Poner la aplicación en modo mantenimiento (opcional pero recomendado)
+            php artisan down || true
+
+            # 3. Traer los últimos cambios
+            git pull origin master
+
+            # 6. Limpiar y cachear configuraciones
+            php artisan optimize:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # 7. Compilar assets de Frontend (Si usas Vite/Mix)
+            npm install
+            npm run build
+
+            # 8. Ajustar permisos (Crucial para Apache)
+            # Asegúrate que el usuario web (www-data) tenga acceso a storage y cache
+            sudo chown -R www-data:www-data storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
+
+            # 9. Reiniciar colas (si usas Laravel Horizon o Supervisor)
+            php artisan queue:restart
+
+            # 10. Levantar la aplicación
+            php artisan up
