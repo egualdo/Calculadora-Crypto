@@ -35,6 +35,8 @@ jobs:
             # 3. Traer los últimos cambios
             git pull origin master
 
+            php artisan migrate
+
             # 6. Limpiar y cachear configuraciones
             php artisan optimize:clear
             php artisan config:cache

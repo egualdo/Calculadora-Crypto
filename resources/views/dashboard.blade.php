@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Crypto - VES/USDT/USD</title>
+    <title>Calculadora Crypto - VES/USDT/USD/EUR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -39,11 +39,13 @@
                 @if ($rate->type != 'blue')
                     <div class="bg-white rounded-lg shadow p-6">
                         <h3 class="font-semibold text-lg mb-2">
-                            {{ $rate->type === 'p2p_buy'
-                                ? 'USDT/VES Compra'
-                                : ($rate->type === 'p2p_sell'
-                                    ? 'USDT/VES Venta'
-                                    : ' USD/VES' . ' ' . 'Oficial') }}
+                            @if ($rate->type === 'p2p_buy')
+                                USDT/VES Compra
+                            @elseif ($rate->type === 'p2p_sell')
+                                USDT/VES Venta
+                            @else
+                                {{ $rate->currency_pair ?? 'USD/VES' }} {{ ucfirst($rate->type) }}
+                            @endif
                         </h3>
                         <p class="text-2xl font-bold text-blue-600">
                             {{ number_format($rate->average_price, 2) }} VES
@@ -362,6 +364,8 @@
                         </option>
                         <option value="USD" {{ ($formData['from_currency'] ?? '') == 'USD' ? 'selected' : '' }}>USD
                         </option>
+                        <option value="EUR" {{ ($formData['from_currency'] ?? '') == 'EUR' ? 'selected' : '' }}>EUR
+                        </option>
                     </select>
                 </div>
                 <div>
@@ -372,6 +376,8 @@
                         <option value="USDT" {{ ($formData['to_currency'] ?? '') == 'USDT' ? 'selected' : '' }}>USDT
                         </option>
                         <option value="USD" {{ ($formData['to_currency'] ?? '') == 'USD' ? 'selected' : '' }}>USD
+                        </option>
+                        <option value="EUR" {{ ($formData['to_currency'] ?? '') == 'EUR' ? 'selected' : '' }}>EUR
                         </option>
                     </select>
                 </div>
@@ -384,6 +390,8 @@
                             USDT Venta P2P</option>
                         <option value="official" {{ ($formData['rate_type'] ?? '') == 'official' ? 'selected' : '' }}>
                             Dólar Oficial</option>
+                        <option value="euro" {{ ($formData['rate_type'] ?? '') == 'euro' ? 'selected' : '' }}>
+                            Euro</option>
                         <option value="comparison"
                             {{ ($formData['rate_type'] ?? '') == 'comparison' ? 'selected' : '' }}>
                             🔄 Comparar P2P vs Oficial</option>
@@ -397,6 +405,39 @@
                     </button>
                 </div>
             </form>
+
+            <!-- Resultados en vivo: comparaciones simultáneas -->
+            <div id="live-comparisons" class="mt-6 p-4 bg-gray-50 rounded-lg border">
+                <h3 class="font-semibold mb-3">Resultados en tiempo real</h3>
+
+                <!-- Inputs sincronizados por moneda -->
+                <div id="multi-inputs" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">VES</label>
+                        <input id="input-VES" data-currency="VES" type="number" step="0.01"
+                            class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">USD</label>
+                        <input id="input-USD" data-currency="USD" type="number" step="0.01"
+                            class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">USDT</label>
+                        <input id="input-USDT" data-currency="USDT" type="number" step="0.01"
+                            class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">EUR</label>
+                        <input id="input-EUR" data-currency="EUR" type="number" step="0.01"
+                            class="w-full p-2 border rounded" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="live-results-grid">
+                    <!-- JS will populate cards here -->
+                </div>
+            </div>
 
             @if (isset($calculation))
                 <div class="mt-6 p-4 bg-green-50 rounded-lg">
@@ -514,6 +555,188 @@
     </div>
 
     <script>
+        // Embed server rates for client-side calculations
+        const ratesData = @json(
+            $rates->mapWithKeys(function ($rate, $key) {
+                return [
+                    $key => [
+                        'average_price' => $rate->average_price,
+                        'currency_pair' => $rate->currency_pair ?? null,
+                        'type' => $rate->type,
+                    ],
+                ];
+            }));
+
+        // Preferred rate type to convert a currency to VES when needed
+        const preferredRateForCurrency = {
+            'USD': 'official',
+            'USDT': 'p2p_sell',
+            'EUR': 'euro'
+        };
+
+        function formatNumber(n) {
+            return Number(n).toLocaleString('es-VE', {
+                maximumFractionDigits: 2
+            });
+        }
+
+        function getVesFromInput(amount, fromCurrency) {
+            if (!amount || isNaN(amount)) return 0;
+            if (fromCurrency === 'VES') return Number(amount);
+            const preferred = preferredRateForCurrency[fromCurrency];
+            let rate = ratesData[preferred];
+            if (!rate) {
+                // fallback: find any rate whose currency_pair starts with the currency
+                rate = Object.values(ratesData).find(r => r.currency_pair && r.currency_pair.startsWith(fromCurrency));
+            }
+            if (!rate) return 0;
+            return Number(amount) * Number(rate.average_price);
+        }
+
+        function updateLiveComparisons() {
+            const amountEl = document.querySelector('input[name="amount"]');
+            const fromEl = document.querySelector('select[name="from_currency"]');
+            const amount = parseFloat(amountEl.value || 0);
+            const fromCurrency = fromEl.value || 'VES';
+            const vesAmount = getVesFromInput(amount, fromCurrency);
+
+            const container = document.getElementById('live-results-grid');
+            container.innerHTML = '';
+
+            Object.keys(ratesData).forEach(key => {
+                const r = ratesData[key];
+                const pair = r.currency_pair || (r.type === 'euro' ? 'EUR/VES' : 'USD/VES');
+                const foreignCurrency = pair.split('/')[0];
+
+                // foreign amount = vesAmount / rate
+                const foreignAmount = r.average_price ? (vesAmount / Number(r.average_price)) : 0;
+
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow p-4';
+                card.innerHTML = `
+                    <h4 class="font-semibold text-lg mb-1">${pair} — ${r.type}</h4>
+                    <p class="text-2xl font-bold text-blue-600">${formatNumber(foreignAmount)} ${foreignCurrency}</p>
+                    <p class="text-sm text-gray-600">${formatNumber(vesAmount)} VES</p>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // existing DOMContentLoaded code runs earlier; ensure listeners for live calc
+            const amountEl = document.querySelector('input[name="amount"]');
+            const fromEl = document.querySelector('select[name="from_currency"]');
+
+            if (amountEl) amountEl.addEventListener('input', updateLiveComparisons);
+            if (fromEl) fromEl.addEventListener('change', updateLiveComparisons);
+
+            // initial render
+            updateLiveComparisons();
+            // --- Multi-input synchronization ---
+            const currencyInputs = {
+                'VES': document.getElementById('input-VES'),
+                'USD': document.getElementById('input-USD'),
+                'USDT': document.getElementById('input-USDT'),
+                'EUR': document.getElementById('input-EUR')
+            };
+
+            let isSyncing = false;
+
+            function getRateForCurrency(currency) {
+                const preferred = preferredRateForCurrency[currency];
+                let rate = ratesData[preferred];
+                if (!rate) {
+                    rate = Object.values(ratesData).find(r => r.currency_pair && r.currency_pair.startsWith(
+                        currency));
+                }
+                return rate ? Number(rate.average_price) : null;
+            }
+
+            function decimalsFor(currency) {
+                return 2;
+            }
+
+            function syncFrom(currency, rawValue) {
+                if (isSyncing) return;
+                isSyncing = true;
+
+                const value = parseFloat(rawValue);
+                if (isNaN(value)) {
+                    Object.values(currencyInputs).forEach(i => i.value = '');
+                    isSyncing = false;
+                    return;
+                }
+
+                // compute ves amount
+                let ves = 0;
+                if (currency === 'VES') {
+                    ves = value;
+                } else {
+                    const rate = getRateForCurrency(currency);
+                    if (!rate) {
+                        ves = 0;
+                    } else {
+                        ves = value * rate; // amount * (VES per unit)
+                    }
+                }
+
+                // update all inputs
+                Object.keys(currencyInputs).forEach(cur => {
+                    if (cur === currency) return; // skip source
+                    const input = currencyInputs[cur];
+                    const rate = getRateForCurrency(cur);
+                    if (!rate || rate === 0) {
+                        input.value = '';
+                        return;
+                    }
+                    const converted = ves / rate; // VES to target
+                    input.value = Number(converted).toFixed(decimalsFor(cur));
+                });
+
+                // Keep the master amount field in sync with VES
+                const mainAmount = document.querySelector('input[name="amount"]');
+                const mainFrom = document.querySelector('select[name="from_currency"]');
+                if (mainAmount && mainFrom) {
+                    mainFrom.value = 'VES';
+                    mainAmount.value = ves.toFixed(2);
+                }
+
+                isSyncing = false;
+            }
+
+            // attach listeners
+            Object.keys(currencyInputs).forEach(cur => {
+                const input = currencyInputs[cur];
+                if (!input) return;
+                input.addEventListener('input', (e) => {
+                    syncFrom(cur, e.target.value);
+                });
+                input.addEventListener('focus', (e) => {
+                    // clear other inputs placeholder if desired
+                });
+            });
+
+            // initial fill: take main amount and from to populate inputs
+            (function initMultiInputs() {
+                const mainAmountVal = parseFloat((document.querySelector('input[name="amount"]') || {
+                    value: 0
+                }).value || 0);
+                const mainFromVal = (document.querySelector('select[name="from_currency"]') || {
+                    value: 'VES'
+                }).value;
+                // set source input with main values
+                const sourceInput = currencyInputs[mainFromVal];
+                if (sourceInput) {
+                    sourceInput.value = mainAmountVal;
+                    syncFrom(mainFromVal, mainAmountVal);
+                } else {
+                    // default fill VES
+                    currencyInputs['VES'].value = mainAmountVal;
+                    syncFrom('VES', mainAmountVal);
+                }
+            })();
+        });
         let chart = null;
         let allDatasets = [];
         let showOnlyAverage = false;
