@@ -8,7 +8,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 
-Schedule::command('rates:update')->everyFiveMinutes()->runInBackground()->withoutOverlapping(5);
+Schedule::command('rates:update')->everyHour()->runInBackground()->withoutOverlapping(5);
 
 // Schedule::command('get:data-competitors')->monthlyOn(5, '12:10')->runInBackground()->withoutOverlapping(5);
 // Schedule::command('get:make-competitor-conclusions')->monthlyOn(5, '12:15')->runInBackground()->withoutOverlapping(5);
