@@ -24,9 +24,9 @@ class ExchangeController extends Controller
     {
         $request->validate([
             'amount' => 'required|numeric|min:0.01',
-            'from_currency' => 'required|in:USDT,USD,VES',
-            'to_currency' => 'required|in:USDT,USD,VES',
-            'rate_type' => 'required|in:p2p_buy,p2p_sell,official'
+            'from_currency' => 'required|in:USDT,USD,VES,EUR',
+            'to_currency' => 'required|in:USDT,USD,VES,EUR',
+            'rate_type' => 'required|in:p2p_buy,p2p_sell,official,euro'
         ]);
 
         $rates = ExchangeRate::latestRates()->get()->keyBy('type');
@@ -65,6 +65,10 @@ class ExchangeController extends Controller
             return $amount / $rate; // VES to USD
         } elseif ($from === 'USD' && $to === 'VES') {
             return $amount * $rate; // USD to VES
+        } elseif ($from === 'VES' && $to === 'EUR') {
+            return $amount / $rate; // VES to EUR (rate = VES per EUR)
+        } elseif ($from === 'EUR' && $to === 'VES') {
+            return $amount * $rate; // EUR to VES
         } elseif ($from === 'USDT' && $to === 'USD') {
             // Asumimos 1:1 para simplificar, podrías agregar tasa USDT/USD
             return $amount;

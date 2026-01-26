@@ -30,7 +30,7 @@ class UpdateExchangeRates extends Command
         $this->updateDollarRates($dolarApi);
 
         // Clear cache
-        // Cache::forget('latest_exchange_rates');
+        Cache::forget('latest_exchange_rates');
 
         $this->info('Exchange rates updated successfully!' . Carbon::now());
     }
@@ -69,9 +69,14 @@ class UpdateExchangeRates extends Command
 
         if ($rates) {
             foreach ($rates as $type => $rate) {
+                $currencyPair = 'USD/VES';
+                if ($type === 'euro') {
+                    $currencyPair = 'EUR/VES';
+                }
+
                 ExchangeRate::create([
                     'type' => $type,
-                    'currency_pair' => 'USD/VES',
+                    'currency_pair' => $currencyPair,
                     'buy_price' => $rate['buy'],
                     'sell_price' => $rate['sell'],
                     'average_price' => $rate['average'],
