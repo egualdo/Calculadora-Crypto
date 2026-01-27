@@ -1,120 +1,87 @@
 <!DOCTYPE html>
-<html lang="es">
+{{-- dark mode styles moved to global `resources/css/app.css` --}}
+/* Override common utility classes when in dark mode */
+.dark [class*="bg-white"] {
+background-color: var(--card) !important;
+color: inherit !important
+}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Crypto - VES/USDT/USD/EUR</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg: #f3f4f6;
-            --card: #ffffff;
-            --muted: #4b5563;
-            --primary: #0d6efd;
-            --success: #16a34a;
-            --warning: #b45309;
-            --accent: #6d28d9;
-        }
+.dark [class*="bg-gray-50"] {
+background-color: #07101a !important
+}
 
-        body {
-            background-color: var(--bg);
-        }
+.dark [class*="bg-blue-50"],
+.dark [class*="bg-blue-100"] {
+background-color: rgba(14, 54, 92, 0.18) !important
+}
 
-        .dark {
-            --bg: #0b1220;
-            --card: #0f1724;
-            --muted: #9aa6b2;
-            --primary: #60a5fa;
-            --success: #34d399;
-            --warning: #f59e0b;
-            --accent: #c084fc;
-            color: #e6eef8;
-        }
+.dark [class*="bg-green-50"],
+.dark [class*="bg-green-100"] {
+background-color: rgba(6, 78, 59, 0.12) !important
+}
 
-        /* Override common utility classes when in dark mode */
-        .dark [class*="bg-white"] {
-            background-color: var(--card) !important;
-            color: inherit !important
-        }
+.dark [class*="bg-yellow-50"],
+.dark [class*="bg-yellow-100"] {
+background-color: rgba(113, 63, 18, 0.08) !important
+}
 
-        .dark [class*="bg-gray-50"] {
-            background-color: #07101a !important
-        }
+.dark [class*="bg-purple-50"],
+.dark [class*="bg-purple-100"] {
+background-color: rgba(76, 29, 149, 0.08) !important
+}
 
-        .dark [class*="bg-blue-50"],
-        .dark [class*="bg-blue-100"] {
-            background-color: rgba(14, 54, 92, 0.18) !important
-        }
+.dark .text-gray-600,
+.dark [class*="text-gray"] {
+color: var(--muted) !important
+}
 
-        .dark [class*="bg-green-50"],
-        .dark [class*="bg-green-100"] {
-            background-color: rgba(6, 78, 59, 0.12) !important
-        }
+.dark .text-blue-600,
+.dark [class*="text-blue"] {
+color: var(--primary) !important
+}
 
-        .dark [class*="bg-yellow-50"],
-        .dark [class*="bg-yellow-100"] {
-            background-color: rgba(113, 63, 18, 0.08) !important
-        }
+.dark .text-green-600,
+.dark [class*="text-green"] {
+color: var(--success) !important
+}
 
-        .dark [class*="bg-purple-50"],
-        .dark [class*="bg-purple-100"] {
-            background-color: rgba(76, 29, 149, 0.08) !important
-        }
+.dark .text-yellow-600,
+.dark [class*="text-yellow"] {
+color: var(--warning) !important
+}
 
-        .dark .text-gray-600,
-        .dark [class*="text-gray"] {
-            color: var(--muted) !important
-        }
+.dark .text-purple-600,
+.dark [class*="text-purple"] {
+color: var(--accent) !important
+}
 
-        .dark .text-blue-600,
-        .dark [class*="text-blue"] {
-            color: var(--primary) !important
-        }
+.dark .border,
+.dark [class*="border-"] {
+border-color: rgba(255, 255, 255, 0.06) !important
+}
 
-        .dark .text-green-600,
-        .dark [class*="text-green"] {
-            color: var(--success) !important
-        }
+.dark .border-blue-200,
+.dark [class*="border-blue"] {
+border-color: rgba(96, 165, 250, 0.12) !important
+}
 
-        .dark .text-yellow-600,
-        .dark [class*="text-yellow"] {
-            color: var(--warning) !important
-        }
+.dark .shadow,
+.dark .shadow-lg {
+box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5) !important
+}
 
-        .dark .text-purple-600,
-        .dark [class*="text-purple"] {
-            color: var(--accent) !important
-        }
+.dark input,
+.dark select,
+.dark textarea {
+background-color: #07101a !important;
+color: var(--muted) !important;
+border-color: rgba(255, 255, 255, 0.04) !important
+}
 
-        .dark .border,
-        .dark [class*="border-"] {
-            border-color: rgba(255, 255, 255, 0.06) !important
-        }
-
-        .dark .border-blue-200,
-        .dark [class*="border-blue"] {
-            border-color: rgba(96, 165, 250, 0.12) !important
-        }
-
-        .dark .shadow,
-        .dark .shadow-lg {
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5) !important
-        }
-
-        .dark input,
-        .dark select,
-        .dark textarea {
-            background-color: #07101a !important;
-            color: var(--muted) !important;
-            border-color: rgba(255, 255, 255, 0.04) !important
-        }
-
-        .dark .bg-gradient-to-r {
-            background-image: none !important
-        }
-    </style>
+.dark .bg-gradient-to-r {
+background-image: none !important
+}
+</style>
 </head>
 
 <body class="bg-gray-100">
@@ -1091,27 +1058,39 @@
         });
     </script>
     <script>
-        (function() {
-            const toggle = document.getElementById('theme-toggle');
-            const stored = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const isDark = stored ? stored === 'dark' : prefersDark;
+        // Update Chart.js colors when theme changes
+        window.addEventListener('themeChanged', function(e) {
+            const dark = e.detail && e.detail.dark;
+            try {
+                if (window.chart) {
+                    // adjust grid and tooltip colors
+                    const gridColor = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.1)';
+                    const tooltipBg = dark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.95)';
+                    const tooltipTitle = dark ? '#fff' : '#000';
+                    const tooltipBody = dark ? '#e6eef8' : '#000';
 
-            function apply(dark) {
-                if (dark) document.documentElement.classList.add('dark');
-                else document.documentElement.classList.remove('dark');
-                if (toggle) toggle.textContent = dark ? '☀️' : '🌙';
-                localStorage.setItem('theme', dark ? 'dark' : 'light');
+                    if (window.chart.options && window.chart.options.scales) {
+                        if (window.chart.options.scales.y && window.chart.options.scales.y.grid) window.chart
+                            .options.scales.y.grid.color = gridColor;
+                        if (window.chart.options.scales.x && window.chart.options.scales.x.grid) window.chart
+                            .options.scales.x.grid = window.chart.options.scales.x.grid || {};
+                        if (window.chart.options.scales.x && window.chart.options.scales.x.grid) window.chart
+                            .options.scales.x.grid.color = gridColor;
+                    }
+
+                    if (window.chart.options && window.chart.options.plugins && window.chart.options.plugins
+                        .tooltip) {
+                        window.chart.options.plugins.tooltip.backgroundColor = tooltipBg;
+                        window.chart.options.plugins.tooltip.titleColor = tooltipTitle;
+                        window.chart.options.plugins.tooltip.bodyColor = tooltipBody;
+                    }
+
+                    window.chart.update('active');
+                }
+            } catch (err) {
+                console.warn('themeChanged handler error', err)
             }
-
-            if (toggle) {
-                toggle.addEventListener('click', function() {
-                    apply(!document.documentElement.classList.contains('dark'));
-                });
-            }
-
-            apply(isDark);
-        })();
+        });
     </script>
 </body>
 

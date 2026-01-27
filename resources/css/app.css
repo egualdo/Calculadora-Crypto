@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -6,6 +6,99 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+
+:root {
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --muted: #4b5563;
+    --primary: #0d6efd;
+    --success: #16a34a;
+    --warning: #b45309;
+    --accent: #6d28d9;
+}
+
+.dark {
+    --bg: #0b1220;
+    --card: #0f1724;
+    --muted: #9aa6b2;
+    --primary: #60a5fa;
+    --success: #34d399;
+    --warning: #f59e0b;
+    --accent: #c084fc;
+    color: #e6eef8;
+}
+
+/* Generic overrides to make common Tailwind utilities play nicely in dark mode */
+.dark [class*="bg-white"] {
+    background-color: var(--card) !important;
+    color: inherit !important;
+}
+.dark [class*="bg-gray-50"] {
+    background-color: #07101a !important;
+}
+.dark [class*="bg-blue-50"],
+.dark [class*="bg-blue-100"] {
+    background-color: rgba(14, 54, 92, 0.18) !important;
+}
+.dark [class*="bg-green-50"],
+.dark [class*="bg-green-100"] {
+    background-color: rgba(6, 78, 59, 0.12) !important;
+}
+.dark [class*="bg-yellow-50"],
+.dark [class*="bg-yellow-100"] {
+    background-color: rgba(113, 63, 18, 0.08) !important;
+}
+.dark [class*="bg-purple-50"],
+.dark [class*="bg-purple-100"] {
+    background-color: rgba(76, 29, 149, 0.08) !important;
+}
+
+.dark .text-gray-600,
+.dark [class*="text-gray"] {
+    color: var(--muted) !important;
+}
+.dark .text-blue-600,
+.dark [class*="text-blue"] {
+    color: var(--primary) !important;
+}
+.dark .text-green-600,
+.dark [class*="text-green"] {
+    color: var(--success) !important;
+}
+.dark .text-yellow-600,
+.dark [class*="text-yellow"] {
+    color: var(--warning) !important;
+}
+.dark .text-purple-600,
+.dark [class*="text-purple"] {
+    color: var(--accent) !important;
+}
+
+.dark .border,
+.dark [class*="border-"] {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+.dark .border-blue-200,
+.dark [class*="border-blue"] {
+    border-color: rgba(96, 165, 250, 0.12) !important;
+}
+.dark .shadow,
+.dark .shadow-lg {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+    background-color: #07101a !important;
+    color: var(--muted) !important;
+    border-color: rgba(255, 255, 255, 0.04) !important;
+}
+.dark .bg-gradient-to-r {
+    background-image: none !important;
 }
