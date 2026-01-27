@@ -7,11 +7,125 @@
     <title>Calculadora Crypto - VES/USDT/USD/EUR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --muted: #4b5563;
+            --primary: #0d6efd;
+            --success: #16a34a;
+            --warning: #b45309;
+            --accent: #6d28d9;
+        }
+
+        body {
+            background-color: var(--bg);
+        }
+
+        .dark {
+            --bg: #0b1220;
+            --card: #0f1724;
+            --muted: #9aa6b2;
+            --primary: #60a5fa;
+            --success: #34d399;
+            --warning: #f59e0b;
+            --accent: #c084fc;
+            color: #e6eef8;
+        }
+
+        /* Override common utility classes when in dark mode */
+        .dark [class*="bg-white"] {
+            background-color: var(--card) !important;
+            color: inherit !important
+        }
+
+        .dark [class*="bg-gray-50"] {
+            background-color: #07101a !important
+        }
+
+        .dark [class*="bg-blue-50"],
+        .dark [class*="bg-blue-100"] {
+            background-color: rgba(14, 54, 92, 0.18) !important
+        }
+
+        .dark [class*="bg-green-50"],
+        .dark [class*="bg-green-100"] {
+            background-color: rgba(6, 78, 59, 0.12) !important
+        }
+
+        .dark [class*="bg-yellow-50"],
+        .dark [class*="bg-yellow-100"] {
+            background-color: rgba(113, 63, 18, 0.08) !important
+        }
+
+        .dark [class*="bg-purple-50"],
+        .dark [class*="bg-purple-100"] {
+            background-color: rgba(76, 29, 149, 0.08) !important
+        }
+
+        .dark .text-gray-600,
+        .dark [class*="text-gray"] {
+            color: var(--muted) !important
+        }
+
+        .dark .text-blue-600,
+        .dark [class*="text-blue"] {
+            color: var(--primary) !important
+        }
+
+        .dark .text-green-600,
+        .dark [class*="text-green"] {
+            color: var(--success) !important
+        }
+
+        .dark .text-yellow-600,
+        .dark [class*="text-yellow"] {
+            color: var(--warning) !important
+        }
+
+        .dark .text-purple-600,
+        .dark [class*="text-purple"] {
+            color: var(--accent) !important
+        }
+
+        .dark .border,
+        .dark [class*="border-"] {
+            border-color: rgba(255, 255, 255, 0.06) !important
+        }
+
+        .dark .border-blue-200,
+        .dark [class*="border-blue"] {
+            border-color: rgba(96, 165, 250, 0.12) !important
+        }
+
+        .dark .shadow,
+        .dark .shadow-lg {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5) !important
+        }
+
+        .dark input,
+        .dark select,
+        .dark textarea {
+            background-color: #07101a !important;
+            color: var(--muted) !important;
+            border-color: rgba(255, 255, 255, 0.04) !important
+        }
+
+        .dark .bg-gradient-to-r {
+            background-image: none !important
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center mb-8">Calculadora Crypto</h1>
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold">Calculadora Crypto</h1>
+            <div class="flex items-center gap-2">
+                <button id="theme-toggle" aria-label="Alternar modo oscuro"
+                    class="px-3 py-2 rounded bg-gray-200 hover:bg-gray-300 transition">🌙</button>
+            </div>
+        </div>
 
         <!-- Tarjetas de Precios -->
         <div class="flex gap-4 mb-8 overflow-x-auto items-stretch whitespace-normal">
@@ -975,6 +1089,29 @@
                 chart.resize();
             }
         });
+    </script>
+    <script>
+        (function() {
+            const toggle = document.getElementById('theme-toggle');
+            const stored = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = stored ? stored === 'dark' : prefersDark;
+
+            function apply(dark) {
+                if (dark) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+                if (toggle) toggle.textContent = dark ? '☀️' : '🌙';
+                localStorage.setItem('theme', dark ? 'dark' : 'light');
+            }
+
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    apply(!document.documentElement.classList.contains('dark'));
+                });
+            }
+
+            apply(isDark);
+        })();
     </script>
 </body>
 
