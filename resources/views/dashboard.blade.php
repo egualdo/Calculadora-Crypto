@@ -347,7 +347,7 @@
         <!-- Calculadora -->
         <div class="bg-white rounded-lg shadow p-6 mb-8">
             <h2 class="text-2xl font-bold mb-4">Calculadora</h2>
-            <form action="{{ route('calculate') }}" method="POST" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {{-- <form action="{{ route('calculate') }}" method="POST" class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 @csrf
                 <div>
                     <label class="block text-sm font-medium mb-1">Monto</label>
@@ -403,7 +403,7 @@
                         Calcular
                     </button>
                 </div>
-            </form>
+            </form> --}}
 
             <!-- Resultados en vivo: comparaciones simultáneas -->
             <div id="live-comparisons" class="mt-6 p-4 bg-gray-50 rounded-lg border">
