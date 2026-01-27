@@ -10,40 +10,4 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  */
 
 import './echo';
-
-// Global theme handling: apply preferred theme, expose toggle and emit events for listeners (charts, components)
-(function() {
-	function prefersDark() {
-		return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-	}
-
-	function applyTheme(dark){
-		if(dark) document.documentElement.classList.add('dark');
-		else document.documentElement.classList.remove('dark');
-		window.dispatchEvent(new CustomEvent('themeChanged', { detail: { dark } }));
-		try{ localStorage.setItem('theme', dark ? 'dark' : 'light'); }catch(e){}
-	}
-
-	function init(){
-		let stored = null;
-		try{ stored = localStorage.getItem('theme'); }catch(e){}
-		const dark = stored ? stored === 'dark' : prefersDark();
-		applyTheme(dark);
-
-		// delegate toggle clicks for any element with id 'theme-toggle'
-		document.addEventListener('click', function(e){
-			const t = e.target;
-			if(!t) return;
-			if(t.id === 'theme-toggle' || t.closest && t.closest('#theme-toggle')){
-				applyTheme(!document.documentElement.classList.contains('dark'));
-			}
-		});
-
-		// expose helpers
-		window.toggleTheme = function(){ applyTheme(!document.documentElement.classList.contains('dark')); };
-		window.setTheme = applyTheme;
-	}
-
-	if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-	else init();
-})();
+import './echo';
