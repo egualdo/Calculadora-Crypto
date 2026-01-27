@@ -231,13 +231,13 @@
         @endif
 
         <!-- Calculadora de Equivalencias en Dólares -->
-        <div class="bg-white rounded-lg shadow p-6 mb-8">
-            {{-- <h2 class="text-2xl font-bold mb-4 text-center">💵 Calculadora de Equivalencias en Dólares</h2>
+        {{-- <div class="bg-white rounded-lg shadow p-6 mb-8"> --}}
+        {{-- <h2 class="text-2xl font-bold mb-4 text-center">💵 Calculadora de Equivalencias en Dólares</h2>
             <p class="text-sm text-gray-600 text-center mb-6">
                 Ingresa cualquier monto en VES para ver cuántos dólares obtienes con cada cotización
             </p> --}}
 
-            {{-- <form action="{{ route('calculate.equivalence') }}" method="POST" class="max-w-md mx-auto">
+        {{-- <form action="{{ route('calculate.equivalence') }}" method="POST" class="max-w-md mx-auto">
                 @csrf
                 <div class="flex gap-4">
                     <div class="flex-1">
@@ -266,7 +266,7 @@
                 </div>
             </form> --}}
 
-            @if (isset($equivalenceResult))
+        {{-- @if (isset($equivalenceResult))
                 <div id="equivalence-results"
                     class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border-2 border-blue-200">
                     <h3 class="font-bold text-xl text-center mb-6">📊 Resultado de la Equivalencia</h3>
@@ -341,8 +341,8 @@
                         </div>
                     </div>
                 </div>
-            @endif
-        </div>
+            @endif --}}
+        {{-- </div> --}}
 
         <!-- Calculadora -->
         <div class="bg-white rounded-lg shadow p-6 mb-8">
