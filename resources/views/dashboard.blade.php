@@ -417,19 +417,21 @@
                             class="w-full p-2 border rounded" />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">USDT</label>
-                        <input id="input-USDT" data-currency="USDT" type="number" step="0.01"
+                        <label class="block text-sm font-medium mb-1">EUR BCV</label>
+                        <input id="input-EUR" data-currency="EUR" type="number" step="0.01"
                             class="w-full p-2 border rounded" />
                     </div>
+
                     <div>
                         <label class="block text-sm font-medium mb-1">USD BCV</label>
                         <input id="input-USD" data-currency="USD" type="number" step="0.01"
                             class="w-full p-2 border rounded" />
                     </div>
 
+
                     <div>
-                        <label class="block text-sm font-medium mb-1">EUR BCV</label>
-                        <input id="input-EUR" data-currency="EUR" type="number" step="0.01"
+                        <label class="block text-sm font-medium mb-1">USDT</label>
+                        <input id="input-USDT" data-currency="USDT" type="number" step="0.01"
                             class="w-full p-2 border rounded" />
                     </div>
                 </div>
