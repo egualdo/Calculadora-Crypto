@@ -14,11 +14,11 @@
         <h1 class="text-3xl font-bold text-center mb-8">Calculadora Crypto Conni</h1>
 
         <!-- Tarjetas de Precios -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="flex gap-4 mb-8 overflow-x-auto items-stretch whitespace-normal">
             <!-- Promedio del Dólar (Destacado) -->
             @if ($averageDollarRate)
                 <div
-                    class="bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg shadow-lg p-6 order-first lg:order-none">
+                    class="flex-none w-64 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg shadow-lg p-4 order-first lg:order-none">
                     <h3 class="font-bold text-lg mb-2">
                         💰 Promedio del Dólar
                     </h3>
@@ -37,7 +37,7 @@
 
             @foreach ($rates as $rate)
                 @if ($rate->type != 'blue')
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex-none w-56 bg-white rounded-lg shadow p-4">
                         <h3 class="font-semibold text-lg mb-2">
                             @if ($rate->type === 'p2p_buy')
                                 USDT/VES Compra
@@ -232,10 +232,10 @@
 
         <!-- Calculadora de Equivalencias en Dólares -->
         <div class="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 class="text-2xl font-bold mb-4 text-center">💵 Calculadora de Equivalencias en Dólares</h2>
+            {{-- <h2 class="text-2xl font-bold mb-4 text-center">💵 Calculadora de Equivalencias en Dólares</h2>
             <p class="text-sm text-gray-600 text-center mb-6">
                 Ingresa cualquier monto en VES para ver cuántos dólares obtienes con cada cotización
-            </p>
+            </p> --}}
 
             {{-- <form action="{{ route('calculate.equivalence') }}" method="POST" class="max-w-md mx-auto">
                 @csrf
@@ -395,8 +395,7 @@
                         <option value="comparison"
                             {{ ($formData['rate_type'] ?? '') == 'comparison' ? 'selected' : '' }}>
                             🔄 Comparar P2P vs Oficial</option>
-                        {{-- <option value="blue" {{ ($formData['rate_type'] ?? '') == 'blue' ? 'selected' : '' }}>Dólar
-                            Blue</option> --}}
+
                     </select>
                 </div>
                 <div class="flex items-end">
@@ -418,17 +417,18 @@
                             class="w-full p-2 border rounded" />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">USD</label>
-                        <input id="input-USD" data-currency="USD" type="number" step="0.01"
-                            class="w-full p-2 border rounded" />
-                    </div>
-                    <div>
                         <label class="block text-sm font-medium mb-1">USDT</label>
                         <input id="input-USDT" data-currency="USDT" type="number" step="0.01"
                             class="w-full p-2 border rounded" />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">EUR</label>
+                        <label class="block text-sm font-medium mb-1">USD BCV</label>
+                        <input id="input-USD" data-currency="USD" type="number" step="0.01"
+                            class="w-full p-2 border rounded" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">EUR BCV</label>
                         <input id="input-EUR" data-currency="EUR" type="number" step="0.01"
                             class="w-full p-2 border rounded" />
                     </div>
@@ -553,11 +553,9 @@
             </div>
         </div> --}}
     </div>
-
-    <script>
-        // Embed server rates for client-side calculations
-        const ratesData = @json(
-            $rates->mapWithKeys(function ($rate, $key) {
+    @php
+        $ratesEnd = $rates
+            ->mapWithKeys(function ($rate, $key) {
                 return [
                     $key => [
                         'average_price' => $rate->average_price,
@@ -565,7 +563,12 @@
                         'type' => $rate->type,
                     ],
                 ];
-            }));
+            })
+            ->toArray();
+    @endphp
+    <script>
+        // Embed server rates for client-side calculations
+        const ratesData = {!! json_encode($ratesEnd) !!};
 
         // Preferred rate type to convert a currency to VES when needed
         const preferredRateForCurrency = {
@@ -644,6 +647,8 @@
             let isSyncing = false;
 
             function getRateForCurrency(currency) {
+                // VES is the base currency: 1 VES per VES
+                if (currency === 'VES') return 1;
                 const preferred = preferredRateForCurrency[currency];
                 let rate = ratesData[preferred];
                 if (!rate) {
@@ -700,6 +705,8 @@
                 if (mainAmount && mainFrom) {
                     mainFrom.value = 'VES';
                     mainAmount.value = ves.toFixed(2);
+                    // update live comparison cards after syncing main amount
+                    if (typeof updateLiveComparisons === 'function') updateLiveComparisons();
                 }
 
                 isSyncing = false;
@@ -838,6 +845,7 @@
         // Función para cargar datos del gráfico
         async function loadChartData() {
             const loadingElement = document.getElementById('chartLoading');
+            if (!loadingElement) return; // chart UI not present
             loadingElement.style.display = 'flex';
 
             try {
@@ -860,7 +868,9 @@
 
         // Función para actualizar el gráfico
         function updateChart(data) {
-            const ctx = document.getElementById('ratesChart').getContext('2d');
+            const canvasEl = document.getElementById('ratesChart');
+            if (!canvasEl) return;
+            const ctx = canvasEl.getContext('2d');
 
             if (chart) {
                 chart.destroy();
@@ -882,10 +892,10 @@
             let datasetsToShow;
             if (showOnlyAverage) {
                 datasetsToShow = allDatasets.filter(dataset => dataset.label === 'Promedio Dólar');
-                toggleText.textContent = 'Ver Todas las Líneas';
+                if (toggleText) toggleText.textContent = 'Ver Todas las Líneas';
             } else {
                 datasetsToShow = allDatasets;
-                toggleText.textContent = 'Ver Solo Promedio';
+                if (toggleText) toggleText.textContent = 'Ver Solo Promedio';
             }
 
             chart.data.datasets = datasetsToShow;
@@ -895,6 +905,7 @@
         // Función para mostrar mensaje cuando no hay datos
         function showNoDataMessage() {
             const canvas = document.getElementById('ratesChart');
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.font = '16px Arial';
@@ -906,6 +917,7 @@
         // Función para mostrar mensaje de error
         function showErrorMessage() {
             const canvas = document.getElementById('ratesChart');
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.font = '16px Arial';
@@ -914,9 +926,11 @@
             ctx.fillText('Error al cargar los datos del gráfico', canvas.width / 2, canvas.height / 2);
         }
 
-        // Event listeners
-        document.getElementById('toggleChart').addEventListener('click', toggleChartView);
-        document.getElementById('refreshChart').addEventListener('click', loadChartData);
+        // Event listeners (guarded)
+        const toggleChartBtn = document.getElementById('toggleChart');
+        if (toggleChartBtn) toggleChartBtn.addEventListener('click', toggleChartView);
+        const refreshChartBtn = document.getElementById('refreshChart');
+        if (refreshChartBtn) refreshChartBtn.addEventListener('click', loadChartData);
 
         // Cargar datos cuando la página esté lista
         document.addEventListener('DOMContentLoaded', function() {
@@ -945,8 +959,8 @@
                 calculateBtn.addEventListener('click', function() {
                     // Mostrar estado de carga
                     this.disabled = true;
-                    btnText.classList.add('hidden');
-                    btnLoading.classList.remove('hidden');
+                    if (btnText) btnText.classList.add('hidden');
+                    if (btnLoading) btnLoading.classList.remove('hidden');
                 });
             }
         });

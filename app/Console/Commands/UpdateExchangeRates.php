@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Services\BinanceService;
 use App\Services\DolarApiService;
+use App\Services\BcvScraperService;
 use App\Models\ExchangeRate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -19,7 +20,7 @@ class UpdateExchangeRates extends Command
         parent::__construct();
     }
 
-    public function handle(BinanceService $binance, DolarApiService $dolarApi)
+    public function handle(BinanceService $binance, DolarApiService $dolarApi, BcvScraperService $bcv)
     {
         $this->info('Updating exchange rates...');
 
@@ -27,12 +28,47 @@ class UpdateExchangeRates extends Command
         $this->updateBinanceRates($binance);
 
         // DolarAPI Rates
-        $this->updateDollarRates($dolarApi);
+        // $this->updateDollarRates($dolarApi);
+
+        // BCV scraping for official USD and EUR
+        $this->updateBcvRates($bcv);
 
         // Clear cache
         Cache::forget('latest_exchange_rates');
 
         $this->info('Exchange rates updated successfully!' . Carbon::now());
+    }
+
+    private function updateBcvRates(BcvScraperService $bcv)
+    {
+        $rates = $bcv->getRates();
+        if (!$rates || !is_array($rates)) return;
+
+        if (isset($rates['official'])) {
+            $r = $rates['official'];
+            ExchangeRate::create([
+                'type' => 'official',
+                'currency_pair' => 'USD/VES',
+                'buy_price' => $r['buy'],
+                'sell_price' => $r['sell'],
+                'average_price' => $r['average'],
+                'metadata' => $r,
+                'last_updated' => now()
+            ]);
+        }
+
+        if (isset($rates['euro'])) {
+            $r = $rates['euro'];
+            ExchangeRate::create([
+                'type' => 'euro',
+                'currency_pair' => 'EUR/VES',
+                'buy_price' => $r['buy'],
+                'sell_price' => $r['sell'],
+                'average_price' => $r['average'],
+                'metadata' => $r,
+                'last_updated' => now()
+            ]);
+        }
     }
 
     private function updateBinanceRates(BinanceService $binance)

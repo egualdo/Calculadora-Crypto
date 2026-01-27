@@ -27,5 +27,11 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground()
             ->appendOutputTo(storage_path('logs/scheduler.log'));
+
+        // Update exchange rates (Binance / DolarAPI / BCV scraper) every 5 minutes
+        $schedule->command('rates:update')->everyFiveMinutes()
+            ->withoutOverlapping()
+            ->runInBackground()
+            ->appendOutputTo(storage_path('logs/rates_update.log'));
     }
 }
