@@ -11,7 +11,7 @@
 
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center mb-8">Calculadora Crypto Conni</h1>
+        <h1 class="text-3xl font-bold text-center mb-8">Calculadora Crypto</h1>
 
         <!-- Tarjetas de Precios -->
         <div class="flex gap-4 mb-8 overflow-x-auto items-stretch whitespace-normal">
