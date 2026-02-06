@@ -41,34 +41,8 @@ class UpdateExchangeRates extends Command
 
     private function updateBcvRates(BcvScraperService $bcv)
     {
-        $rates = $bcv->getRates();
-        if (!$rates || !is_array($rates)) return;
-
-        if (isset($rates['official'])) {
-            $r = $rates['official'];
-            ExchangeRate::create([
-                'type' => 'official',
-                'currency_pair' => 'USD/VES',
-                'buy_price' => $r['buy'],
-                'sell_price' => $r['sell'],
-                'average_price' => $r['average'],
-                'metadata' => $r,
-                'last_updated' => now()
-            ]);
-        }
-
-        if (isset($rates['euro'])) {
-            $r = $rates['euro'];
-            ExchangeRate::create([
-                'type' => 'euro',
-                'currency_pair' => 'EUR/VES',
-                'buy_price' => $r['buy'],
-                'sell_price' => $r['sell'],
-                'average_price' => $r['average'],
-                'metadata' => $r,
-                'last_updated' => now()
-            ]);
-        }
+        // Use service helper to update DB (remove today's old entries and insert new ones)
+        $bcv->updateDatabaseRates();
     }
 
     private function updateBinanceRates(BinanceService $binance)

@@ -5,6 +5,8 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use App\Models\ExchangeRate;
+use Carbon\Carbon;
 
 class BcvScraperService
 {
@@ -142,5 +144,52 @@ class BcvScraperService
             Log::error('BCV scraping error: ' . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Update database with today's BCV rates.
+     * If there are existing records for the same `type` for today, delete them and insert the new ones.
+     * Reuses the same storage shape used by the UpdateExchangeRates command.
+     *
+     * @return bool True on success, false on failure or when no rates found
+     */
+    public function updateDatabaseRates()
+    {
+        $rates = $this->getRates();
+        if (!$rates || !is_array($rates)) {
+            return false;
+        }
+
+        $startOfDay = Carbon::today();
+        $endOfDay = Carbon::tomorrow();
+
+        foreach ($rates as $key => $r) {
+            $type = $key;
+
+            $currencyPair = 'USD/VES';
+            if ($type === 'euro') {
+                $currencyPair = 'EUR/VES';
+            } elseif ($type !== 'official') {
+                $currencyPair = strtoupper($type) . '/VES';
+            }
+
+            // Delete any existing records for this type created today
+            ExchangeRate::where('type', $type)
+                ->whereBetween('created_at', [$startOfDay, $endOfDay])
+                ->delete();
+
+            // Insert new record
+            ExchangeRate::create([
+                'type' => $type,
+                'currency_pair' => $currencyPair,
+                'buy_price' => $r['buy'] ?? null,
+                'sell_price' => $r['sell'] ?? null,
+                'average_price' => $r['average'] ?? null,
+                'metadata' => $r,
+                'last_updated' => now()
+            ]);
+        }
+
+        return true;
     }
 }
